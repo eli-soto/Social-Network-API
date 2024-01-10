@@ -1,5 +1,5 @@
 const { restart } = require('nodemon')
-const { Users, Thoughts } = require('../models');
+const { Thoughts, Users } = require('../models');
 
 // Aggregate function to get the number of Userss overall
 
@@ -11,7 +11,7 @@ module.exports = {
   // Get all Userss
   async getThoughts(req, res) {
     try {
-      const Userss = await Users.find();
+      const thought = await Thoughts.find();
 
       const UsersObj = {
         Userss,
@@ -24,7 +24,7 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  // Get a single Users
+  // Get a single thought
   async getOneThought(req, res) {
     try {
       const Users = await Users.findOne({ _id: req.params.UsersId })
@@ -43,36 +43,80 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  // create a new Users
+  
+  // create a new thought
   async createThought(req, res) {
     try {
-      const Users = await Users.create(req.body);
-      res.json(Users);
+        const thought = await Thoughts.create(req.body)
+        const userData = await Users.findOneAndUpdate(
+            { _id: req.body.userId},
+            { $push: { thoughts: thought._id}},
+            { new: true}
+        )
+        res.json(thought)
     } catch (err) {
-      res.status(500).json(err);
+        res.status(500).json(err)
     }
-  },
+},
 
-
-
-
-  
-  // Delete a Users and remove them from the Thoughts
-  async deleteUsers(req, res) {
+async updateThought(req, res) {
     try {
-      const Users = await Users.findOneAndRemove({ _id: req.params.UsersId });
+        const thought = await Thoughts.findOneAndUpdate({ _id: req.params.thoughtId }, { $set: req.body }, { runValidators: true, new: true }
+        )
+        if (!thought) {
+            return res.status(404).json({ message: 'No thought found with that ID!' })
+        }
+        res.json(thought)
+    } catch (err) {
+        res.status(500).json(err)
+    }
+},
+async deleteThought(req, res) {
+  try {
+      const thought = await Thoughts.findOneAndDelete({ _id: req.params.thoughtId }, { $set: req.body }, { runValidators: true, new: true }
+      )
+      if (!thought) {
+          return res.status(404).json({ message: 'No thought found with that ID!' })
+      }
+      res.json(thought)
+  } catch (err) {
+      res.status(500).json(err)
+  }
+},
 
-      if (!Users) {
+
+async addReaction(req, res) {
+  try {
+    const reaction = await Users.findOneAndRemove({ _id: req.params.UsersId },
+{ $addToSet: {reactions: req.body} }, 
+{ runValidators: true, new: true }
+    )
+    if (!reaction) {
+      return res.status(404).json({ message: 'No such Users exists' });
+    }
+    res.json(reaction)
+  } catch (err) { 
+    res.status(500).json(err)
+  }
+}, 
+
+
+  // Delete a Users and remove them from the Thoughts
+  async deleteReaction(req, res) {
+    try {
+      const reaction = await Users.findOneAndRemove({ _id: req.params.UsersId });
+
+      if (!reaction) {
         return res.status(404).json({ message: 'No such Users exists' });
       }
 
-      const Thoughts = await Thoughts.findOneAndUpdate(
+      const reactionss = await Thoughts.findOneAndUpdate(
         { Userss: req.params.UsersId },
         { $pull: { Userss: req.params.UsersId } },
         { new: true }
       );
 
-      if (!Thoughts) {
+      if (!reactionss) {
         return res.status(404).json({
           message: 'Users deleted, but no Thoughtss found',
         });
