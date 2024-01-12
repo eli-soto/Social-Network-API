@@ -36,6 +36,11 @@ usersSchema.virtual('friendCount').get(function() {
     return this.friends.length;
 })
 
-const Users = model('users', usersSchema)
+const Users = model('Users', usersSchema)
 
 module.exports = Users
+
+// { 
+//     "username": "cookie3", 
+//         "email": "cookie3@gmail.com"
+//     }

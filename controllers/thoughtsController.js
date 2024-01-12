@@ -14,7 +14,7 @@ module.exports = {
       const thought = await Thoughts.find();
 
       const UsersObj = {
-        Userss,
+        Users,
         headCount: await headCount(),
       };
 
@@ -43,7 +43,7 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  
+
   // create a new thought
   async createThought(req, res) {
     try {
