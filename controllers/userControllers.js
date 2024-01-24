@@ -12,7 +12,7 @@ module.exports = {
 
   async getOneUser(req, res) {
     try {
-      const user = await Users.findOne({ _id: req.params.userId })
+      const user = await Users.findOne({ _id: req.params.userId }).populate("friends")
 
         
         if (!user) {

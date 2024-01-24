@@ -15,7 +15,7 @@ module.exports = {
 
       const UsersObj = {
         Users,
-        headCount: await headCount(),
+        // headCount: await headCount(),
       };
 
       res.json(UsersObj);
