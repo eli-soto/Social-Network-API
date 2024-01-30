@@ -43,17 +43,13 @@ module.exports = {
         return;
       }
 
-    //   await Users.updateMany(
-    //     { _id: { $in: friends } },
-    //     { $pull: { friends: params.id } }
-    //   );
-
-    //   await Thoughts.deleteMany({ _id: { $in: user.thoughts } });
       res.json({ message: "Users account and thoughts deleted!" });
     } catch (err) {
       res.status(500).json(err);
     }
   },
+
+
 
   async updateUser(req, res) {
     try {
@@ -74,6 +70,7 @@ module.exports = {
     }
   },
 
+
   async addFriend(req, res) {
     try {
       const user = await Users.findOneAndUpdate(
@@ -86,22 +83,12 @@ module.exports = {
         res.status(404).json({ message: "No user found" });
         return;
       }
-
-    //   const friend = await Users.findOneAndUpdate(
-    //     { _id: req.params.friendId },
-    //     { $addToSet: { friends: req.params.userId } },
-    //     { new: true, runValidators: true }
-    //   );
-
-    //   if (!friend) {
-    //     res.status(404).json({ message: "No user found with this ID" });
-    //   }
-
       res.json(user);
     } catch (err) {
       res.status(500).json(err);
     }
   },
+  
 
   async deleteFriend(req, res) {
     try {
